@@ -10,8 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_15_233235) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_16_135816) do
   create_table "games", force: :cascade do |t|
+    t.text "frames"
+    t.integer "total_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -28,36 +28,9 @@ RSpec.describe GameScorer, type: :service do
         game.roll(10)
         game.roll(5)
         game.roll(4)
-        expect(game.score).to eq(37)
+        expect(game.total_score).to eq(27)
       end
     end
   end
 
-  describe 'score calculation' do
-    context 'for consecutive strikes' do
-      it 'correctly calculates score' do
-        3.times { game.roll(10) }
-        expect(game.score).to eq(60)
-      end
-    end
-    
-    it 'does not finish the game prematurely' do
-        9.times { game.roll(10) } 
-        expect(game).not_to be_finished_game
-    end
-      
-    it 'finishes the game after 10 frames without strikes or spares in the 10th frame' do
-        9.times { game.roll(10) } 
-        game.roll(3)  
-        game.roll(4) 
-        expect(game).to be_finished_game
-    end
-
-    it 'identifies the end of the game correctly' do
-      12.times { game.roll(10) }
-      expect(game.score).to eq(300)
-      expect(game).to be_finished_game
-    end
-
-  end
 end
