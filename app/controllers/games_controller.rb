@@ -6,8 +6,9 @@ class GamesController < ApplicationController
 
   def roll
     game = Game.find(params[:id])
-    puts "Params: #{params.inspect}"  # Print the params to check their values
+    puts "Params: #{params.inspect}"  
     if game.roll(roll_params[:pins].to_i)
+      game.save
       render json: game, status: :ok
     else
       render json: { errors: game.errors.full_messages }, status: :unprocessable_entity
