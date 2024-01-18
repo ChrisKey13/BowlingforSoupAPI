@@ -16,7 +16,7 @@ RSpec.describe 'Games API', type: :request do
         patch "/games/#{game.id}/roll", params: { game: { pins: 4 } }
         expect(response).to have_http_status(:success)
         expect(JSON.parse(response.body)["frames"]).to include([4])
-      end
+    end
 
     it 'rejects an invalid roll' do
       patch "/games/#{game.id}/roll", params: { game: { pins: 11 } }

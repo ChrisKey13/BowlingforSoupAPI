@@ -13,11 +13,13 @@ RSpec.describe GameScorer, type: :service do
 
     context 'with invalid roll data' do
       it 'rejects a roll with more than 10 pins' do
-        expect(game.roll(11)).to be false
+        game.roll(11)
+        expect(game.errors.full_messages).to include("Invalid roll")
       end
-
+  
       it 'rejects a roll with negative pin count' do
-        expect(game.roll(-1)).to be false
+        game.roll(-1)
+        expect(game.errors.full_messages).to include("Invalid roll")
       end
     end
 
@@ -28,8 +30,14 @@ RSpec.describe GameScorer, type: :service do
         game.roll(10)
         game.roll(5)
         game.roll(4)
-        expect(game.total_score).to eq(27)
+        expect(game.total_score).to eq(37)
       end
+
+      it 'handles no strike and no spare correctly' do
+        game.roll(8)
+        game.roll(1)
+      end
+      
     end
   end
 

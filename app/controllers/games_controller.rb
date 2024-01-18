@@ -4,11 +4,14 @@ class GamesController < ApplicationController
     render json: game, status: :created
   end
 
+  def show
+    game = Game.find(params[:id])
+    render json: { frames: game.frames, total_score: game.total_score }
+  end
+  
   def roll
     game = Game.find(params[:id])
-    puts "Params: #{params.inspect}"  
     if game.roll(roll_params[:pins].to_i)
-      game.save
       render json: game, status: :ok
     else
       render json: { errors: game.errors.full_messages }, status: :unprocessable_entity
@@ -16,10 +19,6 @@ class GamesController < ApplicationController
   end
   
   
-  def show
-    game = Game.find(params[:id])
-    render json: { frames: game.frames, total_score: game.total_score }
-  end
 
   private
 
