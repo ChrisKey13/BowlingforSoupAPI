@@ -5,6 +5,10 @@ class Frame
       @rolls = rolls
       @next_rolls = next_rolls
     end
+
+    def self.create(rolls, next_rolls)
+      new(rolls, next_rolls)
+    end
   
     def score
       raise NotImplementedError, 'Subclasses must implement the score method'

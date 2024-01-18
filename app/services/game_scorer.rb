@@ -5,23 +5,26 @@ class GameScorer
 
   def calculate
     total_score = 0
-    rolls = @game.rolls.to_a
-
-    frame_index = 0
-    10.times do
-      frame_rolls = rolls[frame_index, 2]
-      next_rolls = rolls[frame_index + 2, 2]
-
-      if frame_rolls.nil? || frame_rolls.empty?
-        break
-      end
-      
-      frame = FrameFactory.create(frame_rolls, next_rolls)
-
-      total_score += frame.score
-      frame_index += frame_rolls[0] == 10 ? 1 : 2
+    @game.frames.each_with_index do |frame, index|
+      frame_score = score_for_frame(frame, index)
+      total_score += frame_score
     end
-
-    total_score
+    @game.total_score = total_score
+    @game.save
   end
+
+  private
+
+  def score_for_frame(frame, index)
+    next_rolls = next_rolls_for_scoring(index)
+    frame_object = FrameFactory.create(frame, next_rolls)  
+    score = frame_object.score
+  end
+  
+  def next_rolls_for_scoring(index)
+    rolls = @game.frames.flatten
+    current_frame_start = rolls[0..index * 2].count
+    rolls[current_frame_start..current_frame_start + 2] 
+  end
+  
 end

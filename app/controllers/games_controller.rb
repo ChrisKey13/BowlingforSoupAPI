@@ -4,9 +4,13 @@ class GamesController < ApplicationController
     render json: game, status: :created
   end
 
+  def show
+    game = Game.find(params[:id])
+    render json: { frames: game.frames, total_score: game.total_score }
+  end
+  
   def roll
     game = Game.find(params[:id])
-    puts "Params: #{params.inspect}"  # Print the params to check their values
     if game.roll(roll_params[:pins].to_i)
       render json: game, status: :ok
     else
@@ -15,10 +19,6 @@ class GamesController < ApplicationController
   end
   
   
-  def show
-    game = Game.find(params[:id])
-    render json: { frames: game.frames, total_score: game.total_score }
-  end
 
   private
 
