@@ -1,5 +1,5 @@
 class GameState
-    attr_accessor :game, :roll_strategy
+    attr_reader :game, :roll_strategy
   
     def initialize(game)
         @game = game
@@ -9,5 +9,6 @@ class GameState
     def roll(pins)
         @roll_strategy.roll(pins) if @roll_strategy
     end
+
 end
   
