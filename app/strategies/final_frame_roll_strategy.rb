@@ -15,6 +15,8 @@ class FinalFrameRollStrategy
     private
 
     def transition_to_game_over_if_needed
-        @game.state = GameOverState.new(@game) if final_frame_complete?(@game)
-    end
+        if frame_complete?(@game, @game.frames.last, is_final_frame: true)
+            @game.state = GameOverState.new(@game)
+        end
+    end  
 end
