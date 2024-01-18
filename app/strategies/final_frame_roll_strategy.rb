@@ -1,6 +1,5 @@
 class FinalFrameRollStrategy
     include FrameCompleteness
-    include RollStrategy
   
     def initialize(game)
         @game = game
@@ -15,8 +14,6 @@ class FinalFrameRollStrategy
     private
 
     def transition_to_game_over_if_needed
-        if frame_complete?(@game, @game.frames.last, is_final_frame: true)
-            @game.state = GameOverState.new(@game)
-        end
+        @game.state = GameOverState.new(@game) if frame_complete?(@game, @game.frames.last, is_final_frame: true)
     end  
 end
