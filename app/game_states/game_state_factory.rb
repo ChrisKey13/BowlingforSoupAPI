@@ -12,10 +12,10 @@ class GameStateFactory
   end
   
   def self.game_over?(game)
-    final_frame_complete?(game) && game.current_frame > Game::FRAMES_PER_GAME
+    final_frame_complete?(game) && game.current_frame > GameConstraints.instance.frames_per_game
   end
 
   def self.final_frame?(game)
-    game.current_frame ==  Game::FRAMES_PER_GAME
+    game.current_frame ==  GameConstraints.instance.frames_per_game
   end
 end

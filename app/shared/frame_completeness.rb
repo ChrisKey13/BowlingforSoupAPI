@@ -12,7 +12,7 @@ module FrameCompleteness
   private
   
   def regular_frame_complete?(frame_rolls)
-    frame_rolls.count == 2 || frame_rolls.first == Game::MAX_PINS
+    frame_rolls.count == 2 || frame_rolls.first == GameConstraints.instance.max_pins
   end
   
   def final_frame_complete?(game)
@@ -23,7 +23,7 @@ module FrameCompleteness
   end
 
   def is_spare_or_strike?(rolls)
-    rolls.first == Game::MAX_PINS || rolls.sum == Game::MAX_PINS
+    rolls.first == GameConstraints.instance.max_pins || rolls.sum == GameConstraints.instance.max_pins
   end
 end
   

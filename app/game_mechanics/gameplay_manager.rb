@@ -48,7 +48,7 @@ class GameplayManager
   
 
   def final_frame?
-    @game.current_frame >= Game::FRAMES_PER_GAME
+    @game.current_frame >= GameConstraints.instance.frames_per_game
   end
 end
 
