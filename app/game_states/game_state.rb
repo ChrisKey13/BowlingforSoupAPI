@@ -9,6 +9,5 @@ class GameState
     def roll(pins)
         @roll_strategy.roll(pins) if @roll_strategy
     end
-
 end
   

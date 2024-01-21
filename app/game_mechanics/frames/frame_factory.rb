@@ -4,5 +4,5 @@ class FrameFactory
       frame = frame_class.create(rolls, next_rolls)
       return frame if frame
     end
-  end
+  end 
 end

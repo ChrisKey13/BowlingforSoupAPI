@@ -1,43 +1,48 @@
 class Game < ApplicationRecord
-    serialize :frames, type: Array, coder: YAML
+  include BowlingValidation
 
-    MAX_PINS = 10
-    FRAMES_PER_GAME = 10
+  serialize :frames, type: Array, coder: YAML
 
-    attr_accessor :frame, :total_score, :current_frame, :current_roll, :state
+  MAX_PINS = 10
+  FRAMES_PER_GAME = 10
+
+  attr_reader :current_roll
+  attr_accessor :frame, :total_score, :current_frame, :state, :current_roll_attempt
   
-    after_initialize :initialize_state
+  after_initialize :initialize_state
 
   
-    def roll(pins)
-      return false unless valid_roll?(pins)
-      
-      state.roll(pins)
-      self.state = GameStateFactory.build_state(self)
-      
+  def roll(pins)
+    self.current_roll_attempt = pins
+    if valid?
+      update_game_state_with_roll(pins)
       true
+    else
+      false
     end
+  end
     
-    def rolls
-      frames.flatten
-    end
+  def rolls
+    frames.flatten
+  end
     
-    private
-    
-    def initialize_state
-      @frames = []
-      @total_score = 0
-      @current_frame = 1
-      @current_roll = 0
-      @state = GameStateFactory.build_state(self)
-    end
+  def current_roll=(pins)
+    @current_roll = pins
+  end
 
-    def valid_roll?(pins)
-      unless pins.between?(0, Game::MAX_PINS)
-        errors.add(:base, "Invalid roll")
-        return false
-      end
-      true      
-    end
+  private
+    
+  def initialize_state
+    @frames = []
+    @total_score = 0
+    @current_frame = 0
+    @current_roll = 0
+    @state = GameStateFactory.build_state(self)
+  end
+
+  def update_game_state_with_roll(pins)
+    state.roll(pins)
+    self.state = GameStateFactory.build_state(self) 
+  end
 end
   
