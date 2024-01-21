@@ -3,6 +3,11 @@ require 'rails_helper'
 RSpec.describe GameScorer, type: :service do
   include_context 'game setup'
 
+  describe 'GameScorer' do
+    let(:game) { Game.create }
+  end
+  
+
   describe 'roll handling' do
     context 'with valid rolls' do
       it 'updates the game correctly' do
@@ -39,6 +44,8 @@ RSpec.describe GameScorer, type: :service do
       end
       
     end
+
+
   end
 
 end

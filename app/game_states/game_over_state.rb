@@ -1,6 +1,6 @@
 class GameOverState < GameState
     def roll(pins)
-        raise "Game is already over"
+        puts "Game is already over"
     end
       
 end

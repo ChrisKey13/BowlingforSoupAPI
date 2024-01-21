@@ -14,7 +14,6 @@ class Game < ApplicationRecord
       
       state.roll(pins)
       self.state = GameStateFactory.build_state(self)
-      
       true
     end
     
@@ -27,7 +26,7 @@ class Game < ApplicationRecord
     def initialize_state
       @frames = []
       @total_score = 0
-      @current_frame = 1
+      @current_frame = 0
       @current_roll = 0
       @state = GameStateFactory.build_state(self)
     end
