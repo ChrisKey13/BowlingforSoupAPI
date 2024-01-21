@@ -22,7 +22,7 @@ class GameScorer
   end
 
   def determine_next_rolls(index)
-    if index < Game::FRAMES_PER_GAME - 1
+    if index < GameConstraints.instance.max_pins - 1
       next_roll_index = @game.frames[0..index].map(&:length).sum
       all_rolls = @game.frames.flatten
       [all_rolls[next_roll_index], all_rolls[next_roll_index + 1]].compact

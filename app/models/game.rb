@@ -2,10 +2,7 @@ class Game < ApplicationRecord
   include BowlingValidation
 
   serialize :frames, type: Array, coder: YAML
-
-  MAX_PINS = 10
-  FRAMES_PER_GAME = 10
-
+  
   attr_reader :current_roll
   attr_accessor :frame, :total_score, :current_frame, :state, :current_roll_attempt
   
@@ -25,7 +22,7 @@ class Game < ApplicationRecord
   def rolls
     frames.flatten
   end
-    
+  
   def current_roll=(pins)
     @current_roll = pins
   end

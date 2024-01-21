@@ -13,7 +13,7 @@ module BowlingValidation
             return
         end
   
-        if current_frame < Game::FRAMES_PER_GAME - 1
+        if current_frame < GameConstraints.instance.frames_per_game - 1
             validate_regular_frame_roll(current_roll_attempt)
         else
             validate_final_frame_roll(current_roll_attempt)
@@ -25,20 +25,20 @@ module BowlingValidation
     def validate_regular_frame_roll(pins)
         frame = frames[current_frame] || []
 
-        if pins > Game::MAX_PINS
-            errors.add(:base, "Cannot knock down more than #{Game::MAX_PINS} pins in a single roll.")
-        elsif (frame.sum + pins) > Game::MAX_PINS && frame.count < 2
-            errors.add(:base, "Total pins in frame #{current_frame + 1} cannot exceed #{Game::MAX_PINS}.")
+        if pins > GameConstraints.instance.max_pins
+            errors.add(:base, "Cannot knock down more than #{GameConstraints.instance.max_pins} pins in a single roll.")
+        elsif (frame.sum + pins) > GameConstraints.instance.max_pins && frame.count < 2
+            errors.add(:base, "Total pins in frame #{current_frame + 1} cannot exceed #{GameConstraints.instance.max_pins}.")
         end
     end
   
     def validate_final_frame_roll(pins)
         frame = frames[current_frame] || []
         
-        if pins > Game::MAX_PINS
-            errors.add(:base, "Cannot knock down more than #{Game::MAX_PINS} pins in a single roll in the final frame.")
-        elsif frame.count < 2 && (frame.sum + pins) > Game::MAX_PINS
-            errors.add(:base, "The first two rolls in the final frame cannot exceed #{Game::MAX_PINS} pins unless rolling a spare.")
+        if pins > GameConstraints.instance.max_pins
+            errors.add(:base, "Cannot knock down more than #{GameConstraints.instance.max_pins} pins in a single roll in the final frame.")
+        elsif frame.count < 2 && (frame.sum + pins) > GameConstraints.instance.max_pins
+            errors.add(:base, "The first two rolls in the final frame cannot exceed #{GameConstraints.instance.max_pins} pins unless rolling a spare.")
         end
     end
 end
