@@ -8,7 +8,7 @@ class SpareFrame < Frame
     end
   end
   
-  def score
-    GameConstraints.instance.max_pins + next_rolls[0].to_i
+  def bonus_score
+    next_rolls.first.to_i
   end  
 end

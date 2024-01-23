@@ -11,7 +11,17 @@ class Frame
   end
   
   def score
-    raise NotImplementedError, 'Subclasses must implement the score method'
+    base_score + bonus_score
+  end
+
+  protected
+
+  def base_score
+    rolls.sum
+  end
+
+  def bonus_score
+    raise NotImplementedError, 'Subclasses my implement the bonus_score method'
   end
 end
   
