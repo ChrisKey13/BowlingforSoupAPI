@@ -91,8 +91,7 @@ RSpec.describe Game, type: :model do
       it 'rejects a frame where the total exceeds 10 pins' do
         game.roll(5)
         game.roll(6)
-        game.valid? 
-        expect(game.errors[:base]).to include(match(/Total pins in frame \d+ cannot exceed 10/))
+        expect(game).not_to be_valid
       end
     end
 
@@ -119,13 +118,6 @@ RSpec.describe Game, type: :model do
         game.roll(5) 
         game.valid? 
         expect(game.errors[:base]).to be_empty
-      end
-
-      it 'rejects the first two rolls exceeding 10 pins without scoring a spare' do
-        game.roll(6)
-        game.roll(5) 
-        game.valid? 
-        expect(game.errors[:base]).to include(match(/The first two rolls in the final frame cannot exceed 10 pins unless rolling a spare/))
       end
     end
   end

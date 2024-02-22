@@ -41,6 +41,9 @@ RSpec.describe GameScorer, type: :service do
       it 'handles no strike and no spare correctly' do
         game.roll(8)
         game.roll(1)
+
+        expect(game.total_score).to eq(27)
+        expect(game.frames.last).to eq([8, 1])
       end
       
     end
