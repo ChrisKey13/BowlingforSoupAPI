@@ -1,14 +1,19 @@
 class GameScorer
-  def initialize(game)
-    @game = game
-    @next_roll_service = NextRollDeterminationService.new(game)
+  def initialize(game_context)
+    @game_context = game_context
+    @next_roll_service = NextRollDeterminationService.new(game_context)
   end
 
   def calculate_total_score
-    @game.total_score = @game.frames.each_with_index.sum do |frame, index|
+
+    calculated_score = @game_context.frames.each_with_index.sum do |frame, index|
       frame_score(frame, index)
+    end 
+
+    ActiveRecord::Base.transaction do
+      @game_context.update_total_score(calculated_score)
+      @game_context.game.save!
     end
-    @game.save
   end
 
   private

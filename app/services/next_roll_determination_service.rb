@@ -1,6 +1,9 @@
 class NextRollDeterminationService
-    def initialize(game)
-        @game = game
+    include FrameCompleteness
+    
+    def initialize(game_context)
+        @game_context = game_context
+        @game = game_context.game
     end
 
     def next_rolls_for_frame(index)

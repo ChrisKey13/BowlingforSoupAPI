@@ -7,6 +7,8 @@ class GameStateFactory
 
     RegularFrameState.new(game)
   end
+
+  private
   
   def self.game_over?(game)
     game.current_frame > GameConstraints.instance.frames_per_game

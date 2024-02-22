@@ -1,6 +1,6 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :roll]
-  
+
   def create
     game = Game.create
     render json: game, status: :created
@@ -11,14 +11,13 @@ class GamesController < ApplicationController
   end
   
   def roll
+    puts "DEBUG: Rolling pins=#{roll_params[:pins].to_i} for game ID=#{@game.id}"
     if @game.roll(roll_params[:pins].to_i)
       render json: @game, status: :ok
     else
       render json: { errors: @game.errors.full_messages }, status: :unprocessable_entity
     end
   end
-  
-  
 
   private
 
