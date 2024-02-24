@@ -89,10 +89,10 @@ RSpec.describe Game, type: :model do
       end
 
       it 'rejects a frame where the total exceeds 10 pins' do
-        game.roll(5)
-        game.roll(6)
-        expect(game).not_to be_valid
+        expect { game.roll(5) }.to_not raise_error
+        expect { game.roll(6) }.to raise_error(ActiveRecord::RecordInvalid)
       end
+      
     end
 
     context 'in the final frame' do

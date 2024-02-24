@@ -7,22 +7,37 @@ class RollService
     end
 
     def add_roll(pins)
-
-        puts "DEBUG: RollService#add_roll - Start: Current Frame=#{@game.current_frame}, Pins=#{pins}, Frames before=#{@game.frames.inspect}"
-        if final_frame?
-            handle_final_frame_rolls(pins)
-        else
-            puts "DEBUG: RollService#add_roll - Before Update: Current Frame=#{@game.current_frame}, Frames=#{@game.frames.inspect}"
-            update_frames(pins)
-            puts "DEBUG: RollService#add_roll - Before Update: Current Frame=#{@game.current_frame}, Frames=#{@game.frames.inspect}"
-            update_counts
-            puts "DEBUG: RollService#add_roll - After update_counts: Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}"
+        log_start(pins)
+        begin
+            update_roll_data(pins)
+        rescue StandardError => exception
+            @game.add_validation_error(exception.message)
+            return false
+        ensure
             update_game_state_if_needed
+            log_end
         end
-        puts "DEBUG: RollService#add_roll - After update: Frames=#{@game.frames.inspect}, Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}"
     end
 
     private
+
+    def log_start(pins)
+        puts "DEBUG: RollService#add_roll - Start: Current Frame=#{@game.current_frame}, Pins=#{pins}, Frames before=#{@game.frames.inspect}"        
+    end
+
+    def update_roll_data(pins)
+        if final_frame?
+            handle_final_frame_rolls(pins)
+        else
+            update_frames_and_counts(pins)
+        end
+    end
+
+    def update_frames_and_counts(pins)
+        update_frames(pins)
+        validate_frame_data
+        update_counts
+    end
 
     def update_frames(pins)
         puts "DEBUG: update_frames - Before: Frames=#{@game.frames.inspect}"
@@ -35,13 +50,26 @@ class RollService
     end
       
     def update_counts
-        puts "DEBUG: update_counts - Before: Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}"
+        puts "DEBUG: update_counts - Before: Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}, Frame Complete=#{frame_complete?(@game, @game.frames.last, is_final_frame: final_frame?)}"
+        
         if frame_complete?(@game, @game.frames.last, is_final_frame: final_frame?)
             advance_frame
+            puts "DEBUG: Frame #{final_frame? ? 'final' : (@game.current_frame - 1)} completed. Advancing to next frame."
         else
             increment_roll
+            puts "DEBUG: Continuing in current frame #{@game.current_frame}, next roll count: #{@game.current_roll}."
         end
+        
         puts "DEBUG: update_counts - After: Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}"
+    end
+    
+
+    def validate_frame_data
+        current_frame_rolls = @game.frames.last || []
+        frame_sum = current_frame_rolls.sum
+        if !final_frame? && frame_sum > GameConstraints.instance.max_pins
+            raise StandardError.new("Validation error - Frame total exceeds maximum pins.")
+        end
     end
       
     def advance_frame
@@ -74,5 +102,9 @@ class RollService
 
     def handle_final_frame_rolls(pins)
         @game.frames.last << pins if @game.frames.last.length < 3
+    end
+
+    def log_end
+        puts "DEBUG: RollService#add_roll - After update: Frames=#{@game.frames.inspect}, Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}"
     end
 end

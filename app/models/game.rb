@@ -27,6 +27,10 @@ class Game < ApplicationRecord
     frames.flatten
   end
 
+  def add_validation_error(message)
+    errors.add(:base, message)
+  end
+
 
   private
     
