@@ -1,10 +1,7 @@
 class StrikeFrame < Frame
-  def self.create(rolls, next_rolls)
-    if rolls.first == GameConstraints.instance.max_pins
-      new(rolls, next_rolls)
-    else
-      nil
-    end
+  
+  def self.valid?(rolls, next_rolls)
+    rolls.first == GameConstraints.instance.max_pins
   end
 
   def score
