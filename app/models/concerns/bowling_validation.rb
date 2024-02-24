@@ -25,7 +25,6 @@ module BowlingValidation
 
   def validate_regular_frame_roll(pins)
     frame = frames[current_frame] || []
-    puts "DEBUG: validate_regular_frame_roll - Before Validation. Frame=#{frame.inspect}, Pins=#{pins}, CurrentFrame=#{current_frame}"
 
     frame_sum_before = frame.sum
 
@@ -33,8 +32,6 @@ module BowlingValidation
       errors.add(:base, "Cannot knock down more than #{GameConstraints.instance.max_pins} pins in a single roll.")
     elsif (frame_sum_before) > GameConstraints.instance.max_pins && !is_spare_or_strike?(frame, pins)
       errors.add(:base, "Total pins in frame #{current_frame + 1} cannot exceed #{GameConstraints.instance.max_pins}.")
-    else
-      puts "DEBUG: Validation Passed - Frame=#{frame.inspect}, Pins=#{pins}, FrameSumAfter=#{frame_sum_before + pins}"
     end
   end
 
@@ -45,22 +42,16 @@ module BowlingValidation
       errors.add(:base, "Cannot knock down more than #{GameConstraints.instance.max_pins} pins in a single roll in the final frame.")
     elsif frame.count < 2 && (frame.sum) > GameConstraints.instance.max_pins && !is_spare?(frame, pins)
       errors.add(:base, "The first two rolls in the final frame cannot exceed #{GameConstraints.instance.max_pins} pins unless rolling a spare.")
-    else
-      puts "DEBUG: Validation Passed - Final frame roll is valid."
     end
   end
 
   def validate_frame_total
     frame = frames[current_frame] || []
-    puts "DEBUG: validate_frame_total - Frame=#{frame.inspect}, FrameSum=#{frame.sum}, CurrentFrame=#{current_frame}"
 
 
     if frame.sum > GameConstraints.instance.max_pins
       errors.add(:base, "Total pins in a regular frame cannot exceed #{GameConstraints.instance.max_pins}.")
-    else
-      puts "DEBUG: Frame total is within limit. FrameSum=#{frame.sum}"
     end
-
   end
 
   def is_spare_or_strike?(frame, pins)

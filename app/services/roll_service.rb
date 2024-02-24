@@ -7,7 +7,6 @@ class RollService
     end
 
     def add_roll(pins)
-        log_start(pins)
         begin
             update_roll_data(pins)
         rescue StandardError => exception
@@ -15,15 +14,10 @@ class RollService
             return false
         ensure
             update_game_state_if_needed
-            log_end
         end
     end
 
     private
-
-    def log_start(pins)
-        puts "DEBUG: RollService#add_roll - Start: Current Frame=#{@game.current_frame}, Pins=#{pins}, Frames before=#{@game.frames.inspect}"        
-    end
 
     def update_roll_data(pins)
         if final_frame?
@@ -40,27 +34,19 @@ class RollService
     end
 
     def update_frames(pins)
-        puts "DEBUG: update_frames - Before: Frames=#{@game.frames.inspect}"
         if new_frame_needed?
             @game.frames << [pins]
         else
             @game.frames.last << pins
         end
-        puts "DEBUG: update_frames - After: Frames=#{@game.frames.inspect}"
     end
       
-    def update_counts
-        puts "DEBUG: update_counts - Before: Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}, Frame Complete=#{frame_complete?(@game, @game.frames.last, is_final_frame: final_frame?)}"
-        
+    def update_counts        
         if frame_complete?(@game, @game.frames.last, is_final_frame: final_frame?)
             advance_frame
-            puts "DEBUG: Frame #{final_frame? ? 'final' : (@game.current_frame - 1)} completed. Advancing to next frame."
         else
             increment_roll
-            puts "DEBUG: Continuing in current frame #{@game.current_frame}, next roll count: #{@game.current_roll}."
         end
-        
-        puts "DEBUG: update_counts - After: Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}"
     end
     
 
@@ -73,7 +59,6 @@ class RollService
     end
       
     def advance_frame
-        puts "DEBUG: RollService#advance_frame - Advancing to Next Frame: Next Frame=#{@game.current_frame + 1}"
         unless final_frame?
             @game.current_frame += 1
             @game.current_roll = 0
@@ -81,7 +66,6 @@ class RollService
     end
       
     def increment_roll
-        puts "DEBUG: RollService#increment_roll - Incrementing Roll Count: Next Roll=#{@game.current_roll + 1}"
         @game.current_roll += 1
     end
     
@@ -102,9 +86,5 @@ class RollService
 
     def handle_final_frame_rolls(pins)
         @game.frames.last << pins if @game.frames.last.length < 3
-    end
-
-    def log_end
-        puts "DEBUG: RollService#add_roll - After update: Frames=#{@game.frames.inspect}, Current Frame=#{@game.current_frame}, Current Roll=#{@game.current_roll}"
     end
 end
