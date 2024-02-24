@@ -6,10 +6,6 @@ module FrameCompleteness
                             else
                               frame_rolls.first == 10 || frame_rolls.length == 2
                             end
-
-    # Adjusted debug statement to use local variable `completion_condition`
-    puts "DEBUG: Frame complete? - Frame Rolls=#{frame_rolls.inspect}, Is Final Frame=#{is_final_frame}, Complete=#{completion_condition}"
-
     completion_condition
   end
 

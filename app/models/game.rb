@@ -9,17 +9,13 @@ class Game < ApplicationRecord
 
   
   def roll(pins)
-    puts "DEBUG: Before adding roll - Current Frame=#{current_frame}, Pins=#{pins}, Frames=#{frames.inspect}"
     return false unless update_roll_attempt(pins) && valid?
-    puts "DEBUG: Game#roll - Validation passed. Proceeding with roll. Current Frame=#{current_frame}, Frames=#{frames.inspect}, Valid=#{valid?}"
 
     game_context = GameContext.new(self)
     gameplay_manager = GameplayManager.new(game_context)
     gameplay_manager.handle_roll(pins)
-    puts "DEBUG: Game#roll - Roll handled. Just before save_context_changes. Current Frame=#{current_frame}, Frames=#{frames.inspect}, Total Score=#{total_score}"
 
     save_context_changes(game_context)
-    puts "DEBUG: After adding roll - Current Frame=#{current_frame}, Frames=#{frames.inspect}"
     true
   end
 
