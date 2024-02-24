@@ -1,11 +1,7 @@
 class SpareFrame < Frame
-  
-  def self.create(rolls, next_rolls)
-    if rolls.sum == GameConstraints.instance.max_pins && rolls.count == 2
-      new(rolls, next_rolls)
-    else
-      nil
-    end
+
+  def self.valid?(rolls, next_rolls)
+    rolls.sum == GameConstraints.instance.max_pins && rolls.count == 2
   end
   
   def bonus_score
