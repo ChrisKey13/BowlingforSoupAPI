@@ -21,7 +21,7 @@ class RollService
 
     def update_roll_data(pins)
         if final_frame?
-            handle_final_frame_rolls(pins)
+            @game.frames.last << pins
         else
             update_frames_and_counts(pins)
         end
@@ -82,9 +82,5 @@ class RollService
             new_state = GameStateFactory.build_state(@game)
             @game.state = new_state
         end
-    end
-
-    def handle_final_frame_rolls(pins)
-        @game.frames.last << pins if @game.frames.last.length < 3
     end
 end

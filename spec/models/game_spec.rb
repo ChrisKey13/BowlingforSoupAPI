@@ -82,6 +82,8 @@ RSpec.describe Game, type: :model do
       it 'correctly calculates the total score' do
         expect(game.total_score).to eq(64)
       end
+    end
+    
 
     context 'with multiple strikes' do
       before do
