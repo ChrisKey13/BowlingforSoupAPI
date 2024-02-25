@@ -20,11 +20,11 @@ class GameContext
 
     def state
         game.state
-      end
+    end
     
-      def state=(new_state)
+    def state=(new_state)
         game.state = new_state
-      end
+    end
 
     def frames
         game.frames

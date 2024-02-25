@@ -36,7 +36,7 @@ class Game < ApplicationRecord
     self.current_frame = 0
     self.current_roll_attempt ||=0
     self.current_roll ||=0
-    self.state = determine_initial_state
+    self.state = determine_state
   end
 
   def update_roll_attempt(pins)
@@ -46,7 +46,7 @@ class Game < ApplicationRecord
 
   def save_context_changes(game_context)
     assign_attributes_from_context(game_context)
-    self.state = GameStateFactory.build_state(self) 
+    self.state = determine_state
     save
   end
 
@@ -57,7 +57,7 @@ class Game < ApplicationRecord
     self.state = game_context.state
   end
 
-  def determine_initial_state
+  def determine_state
     GameStateFactory.build_state(self)
   end
 end
