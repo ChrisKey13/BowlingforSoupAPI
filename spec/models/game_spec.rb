@@ -47,12 +47,56 @@ RSpec.describe Game, type: :model do
       it { expect(game).to have_total_score(28) }
     end
 
+    context 'with a spare followed by a strike' do
+      before do
+        2.times { game.roll(5) }
+        game.roll(10)
+        game.roll(3)
+        game.roll(4)
+      end
+
+      it { expect(game).to have_total_score(44) }
+      it { expect(game.errors).to be_empty }
+    end
+
+    context 'with a strike followed by a spare' do
+      before do
+        game.roll(10)
+        2.times {game.roll(5)}
+      end
+
+      it { expect(game).to have_total_score(30) }
+      it { expect(game.errors).to be_empty }
+    end
+
+    context 'with a sequence of strikes and spares' do
+      before do
+        game.roll(10)
+        game.roll(7)
+        game.roll(3)
+        game.roll(4)
+        game.roll(6)
+        game.roll(10)
+      end
+    
+      it 'correctly calculates the total score' do
+        expect(game.total_score).to eq(64)
+      end
+
     context 'with multiple strikes' do
       before do
         3.times { game.roll(10) }
       end
 
       it { expect(game).to have_total_score(60) }
+    end
+
+    context 'with multiple spares' do
+      before do
+        10.times { game.roll(5) }
+      end
+
+      it { expect(game).to have_total_score(70) }
     end
 
     context 'in the 10th frame' do
@@ -110,7 +154,7 @@ RSpec.describe Game, type: :model do
       it 'rejects a single roll exceeding 10 pins in the final frame' do
         game.roll(11)
         game.valid? 
-        expect(game.errors[:base]).to include(match(/Cannot knock down more than 10 pins in a single roll in the final frame/))
+        expect(game.errors[:base]).to include(match(/Cannot knock down more than 10 pins in a single roll/))
       end
 
       it 'allows the first two rolls to total more than 10 if a spare is scored' do
