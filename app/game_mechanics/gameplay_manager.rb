@@ -7,7 +7,7 @@ class GameplayManager
   def handle_roll(pins)
     add_roll(pins)
     update_game_state
-    calculate_total_score
+    update_total_score
   end
 
   private
@@ -22,8 +22,8 @@ class GameplayManager
 
   end
 
-  def calculate_total_score
-    GameScorer.new(@game_context).calculate_total_score
+  def update_total_score
+    GameScorer.new(@game_context).update_total_score
   end
 end
 
