@@ -1,11 +1,15 @@
 class Game < ApplicationRecord
   include BowlingValidation
 
+  belongs_to :lane
+
   serialize :frames, type: Array, coder: YAML
   
   attr_accessor :current_frame, :state, :total_score,:current_roll_attempt, :current_roll
   
   after_initialize :initialize_state
+
+  # after_update :clear_lane, if: :game_over?
 
   
   def roll(pins)
@@ -60,5 +64,13 @@ class Game < ApplicationRecord
   def determine_state
     GameStateFactory.build_state(self)
   end
+
+  # def clear_lane
+  #   Lane.find_by(current_game_id: id).update(current_game: nil)
+  # end
+
+  # def game_over?
+  #   self.state == GameOverState
+  # end
 end
   
