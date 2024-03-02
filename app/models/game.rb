@@ -1,5 +1,6 @@
 class Game < ApplicationRecord
   include BowlingValidation
+  belongs_to :player, optional: true
 
   serialize :frames, type: Array, coder: YAML
   
