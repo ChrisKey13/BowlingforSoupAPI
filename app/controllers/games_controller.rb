@@ -1,9 +1,25 @@
 class GamesController < ApplicationController
   before_action :set_game, only: [:show, :roll]
+  before_action :set_game_session, only: [:create, :create_for_player]
 
   def create
-    game = Game.create
-    render json: game, status: :created
+    game = game_session.games.create(game_params.except(:player_id))
+  
+    if game.persisted?
+      render json: game, status: :created
+    else
+      render json: { errors: game.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def create_for_player
+    game = @game_session.games.new(game_params)
+
+    if game.save
+      render json: game, status: :created
+    else
+      render json: game.errors, status: :unprocessable_entity
+    end
   end
 
   def show
@@ -20,11 +36,19 @@ class GamesController < ApplicationController
 
   private
 
+  def game_params
+    params.require(:game).permit(:pins, :game_session_id, :player_id)
+  end
+
   def roll_params
     params.require(:game).permit(:pins)
   end
 
   def set_game
     @game = Game.find(params[:id])
+  end
+
+  def set_game_session
+    @game_session = GameSession.find(params[:game_session_id])
   end
 end
