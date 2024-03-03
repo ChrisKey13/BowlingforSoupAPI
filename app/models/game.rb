@@ -32,6 +32,7 @@ class Game < ApplicationRecord
   private
     
   def initialize_state
+    puts "Initializing state for Game"
     self.frames ||= []
     self.total_score = 0
     self.current_frame = 0

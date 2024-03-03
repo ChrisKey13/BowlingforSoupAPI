@@ -1,7 +1,20 @@
 class Player < ApplicationRecord
     belongs_to :game_session
-    has_many :game, dependent: :destroy
+    has_many :games, dependent: :destroy
   
     validates :name, presence: true
-  end
-  
+
+    after_create :create_initial_game
+
+    private
+
+    def create_initial_game
+        puts "Creating initial game for Player #{id}"
+        game = games.create(total_score: 0)
+        if game.persisted?
+          puts "Initial game created successfully: #{game.inspect}"
+        else
+          puts "Failed to create initial game: #{game.errors.full_messages}"
+        end
+    end
+end
