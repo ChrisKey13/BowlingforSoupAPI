@@ -13,12 +13,15 @@ class GamesController < ApplicationController
   end
 
   def create_for_player
-    game = @game_session.games.new(game_params)
 
-    if game.save
+    player = @game_session.players.find(params[:player_id])
+
+    game = player.create_initial_game
+
+    if game.persisted?
       render json: game, status: :created
     else
-      render json: game.errors, status: :unprocessable_entity
+      render json: { errors: game.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
