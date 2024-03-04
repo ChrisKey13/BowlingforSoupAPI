@@ -22,4 +22,16 @@ RSpec.describe 'GameSessions API', type: :request do
       expect(Game.count).to eq(2) 
     end
   end
+
+  describe 'GET /game_sessions/:id/winner' do
+    let!(:game_session) { create(:game_session, :with_players) }
+
+    it 'returns the winner of the game session' do
+      get winner_game_session_path(game_session)
+
+      json = JSON.parse(response.body)
+      expect(response).to have_http_status(:success)
+      expect(json['id']).to eq(game_session.winner.id)
+    end
+  end
 end
