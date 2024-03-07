@@ -12,11 +12,7 @@ class GameSession < ApplicationRecord
 
     def winners
         winning_score = games.maximum(:total_score)
-        puts "Calculated Winning Score: #{winning_score}"
         tied_winners = games.where(total_score: winning_score).map(&:player)
-        puts "Tied Winners Count: #{tied_winners.size}"
-        tied_winners.each_with_index { |w, index| puts "Winner #{index + 1}: Player ID: #{w.id}, Score: #{w.games.find_by(game_session_id: self.id)&.total_score}" }
-        tied_winners
-      end
+    end
 
 end

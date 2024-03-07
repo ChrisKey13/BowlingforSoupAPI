@@ -26,7 +26,6 @@ RSpec.describe 'Games API', type: :request do
     let!(:game) { create(:game, player: player) }
 
     it 'retrieves the current game status' do
-      puts "Game ID: #{game.id}" 
       get "/game_sessions/#{game_session.id}/games/#{game.id}"
       expect(response).to have_http_status(:success)
       expect(JSON.parse(response.body)).to include("frames" => [], "total_score" => 0)
