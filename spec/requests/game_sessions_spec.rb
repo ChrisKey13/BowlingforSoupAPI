@@ -13,8 +13,6 @@ RSpec.describe 'GameSessions API', type: :request do
           ]
         }
       }
-      puts response.status
-      puts response.body
       expect(response).to have_http_status(:created)
       json_response = JSON.parse(response.body)
 
@@ -58,7 +56,6 @@ RSpec.describe 'GameSessions API', type: :request do
   
     it 'returns an appropriate message when no games have been played' do
       get "/game_sessions/#{game_session.id}/winner"
-      puts response.body
 
       json = JSON.parse(response.body)
       expect(response).to have_http_status(:ok)
@@ -72,14 +69,9 @@ RSpec.describe 'GameSessions API', type: :request do
       
       
       it 'returns all tied players as winners' do
-        puts "Test setup: GameSession ID: #{game_session.id}, Players: #{game_session.players.size}, Games: #{game_session.games.size}"
-        game_session.games.each_with_index do |game, index|
-          puts "Game Setup #{index + 1}: ID: #{game.id}, Player ID: #{game.player_id}, Score: #{game.total_score}"
-        end
         get "/game_sessions/#{game_session.id}/winner"
         
         json = JSON.parse(response.body)
-        puts "Response: #{response.body}"
 
         expect(response).to have_http_status(:ok)
         expect(json['winners'].length).to be > 1
