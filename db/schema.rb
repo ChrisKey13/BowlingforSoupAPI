@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_02_173150) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_06_174747) do
   create_table "game_sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -21,7 +21,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_02_173150) do
     t.integer "total_score"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "player_id", null: false
+    t.integer "player_id"
+    t.integer "game_session_id"
+    t.index ["game_session_id"], name: "index_games_on_game_session_id"
     t.index ["player_id"], name: "index_games_on_player_id"
   end
 
@@ -33,6 +35,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_02_173150) do
     t.index ["game_session_id"], name: "index_players_on_game_session_id"
   end
 
+  add_foreign_key "games", "game_sessions"
   add_foreign_key "games", "players"
   add_foreign_key "players", "game_sessions"
 end

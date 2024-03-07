@@ -1,6 +1,7 @@
 class Game < ApplicationRecord
   include BowlingValidation
   belongs_to :player, optional: true
+  belongs_to :game_session, optional: true
 
   serialize :frames, type: Array, coder: YAML
   
@@ -28,13 +29,22 @@ class Game < ApplicationRecord
     errors.add(:base, message)
   end
 
+  def total_score=(value)
+    write_attribute(:total_score, value)
+  end
+
+  def total_score
+    read_attribute(:total_score)
+  end
+
+
 
   private
     
   def initialize_state
     puts "Initializing state for Game"
     self.frames ||= []
-    self.total_score = 0
+    self.total_score = 0 if self.total_score.nil?
     self.current_frame = 0
     self.current_roll_attempt ||=0
     self.current_roll ||=0
