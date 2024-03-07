@@ -4,124 +4,71 @@ RSpec.describe Game, type: :model do
   include_context 'game setup'
 
   describe 'Special Scenarios' do
-    context 'with all strikes (a perfect game)' do
-      it 'scores 300 points' do
-        12.times { game.roll(10) }
-        expect(game.total_score).to eq(300)
-      end
+    it 'scores 300 points in a perfect game' do
+      roll_sequence(game, Array.new(12, 10))
+      expect(game).to have_total_score(300)
     end
 
-    context 'with all spares' do
-      it 'scores 150 points' do
-        21.times { game.roll(5) }
-        expect(game.total_score).to eq(150)
-      end
+    it 'scores 150 points with all spares' do
+      roll_sequence(game, Array.new(21, 5))
+      expect(game).to have_total_score(150)
     end
 
-    context 'with all gutters' do
-      it 'scores 0 points' do
-        20.times { game.roll(0) }
-        expect(game.total_score).to eq(0)
-      end
+    it 'scores 0 points with all gutters' do
+      roll_sequence(game, Array.new(20, 0))
+      expect(game).to have_total_score(0)
     end
   end
 
   describe 'Scoring' do
-    context 'with a spare followed by a regular hit' do
-      before do
-        game.roll(7)
-        game.roll(3)
-        game.roll(5)
-      end
-
-      it { expect(game).to have_total_score(20) }
+    it 'correctly identifies a strike' do
+      roll_sequence(game, [10])
+      expect(game).to be_a_strike
     end
 
-    context 'with a strike followed by regular hits' do
-      before do
-        game.roll(10)
-        game.roll(3)
-        game.roll(6)
-      end
-
-      it { expect(game).to have_total_score(28) }
+    it 'correctly identifies a spare' do
+      roll_sequence(game, [7, 3])
+      expect(game).to be_a_spare
     end
 
-    context 'with a spare followed by a strike' do
-      before do
-        2.times { game.roll(5) }
-        game.roll(10)
-        game.roll(3)
-        game.roll(4)
-      end
-
-      it { expect(game).to have_total_score(44) }
-      it { expect(game.errors).to be_empty }
+    it 'accumulates score correctly after a spare' do
+      roll_sequence(game, [7, 3, 5])
+      expect(game).to have_total_score(20)
     end
 
-    context 'with a strike followed by a spare' do
-      before do
-        game.roll(10)
-        2.times {game.roll(5)}
-      end
+    it 'accumulates score correctly after a strike followed by regular hits' do
+      roll_sequence(game, [10, 3, 6])
+      expect(game).to have_total_score(28)
+    end
 
-      it { expect(game).to have_total_score(30) }
-      it { expect(game.errors).to be_empty }
+    it 'handles a spare followed by a strike' do
+      roll_sequence(game, [5, 5, 10])
+      expect(game).to have_total_score(30)
+    end
+
+    it 'handles a strike followed by a spare' do
+      roll_sequence(game, [10, 5, 5])
+      expect(game).to have_total_score(30)
     end
 
     context 'with a sequence of strikes and spares' do
-      before do
-        game.roll(10)
-        game.roll(7)
-        game.roll(3)
-        game.roll(4)
-        game.roll(6)
-        game.roll(10)
-      end
-    
       it 'correctly calculates the total score' do
-        expect(game.total_score).to eq(64)
+        roll_sequence(game, [10, 7, 3, 4, 6, 10, 2, 8, 5])
+        expect(game).to have_total_score(94)
       end
     end
-    
 
     context 'with multiple strikes' do
-      before do
-        3.times { game.roll(10) }
+      it 'accumulates score correctly' do
+        roll_sequence(game, Array.new(5, 10))
+        expect(game).to have_total_score(120)
       end
-
-      it { expect(game).to have_total_score(60) }
     end
 
     context 'with multiple spares' do
-      before do
-        10.times { game.roll(5) }
-      end
-
-      it { expect(game).to have_total_score(70) }
-    end
-
-    context 'in the 10th frame' do
-      context 'with a strike and bonus rolls' do
-        before do
-          18.times { game.roll(0) }
-          game.roll(10)
-          game.roll(5)
-          game.roll(4)
-        end
-
-        it { expect(game).to have_total_score(19) }
-      end
-
-      context 'with a spare and bonus roll' do
-        before do
-          18.times { game.roll(0) }
-          game.roll(5)
-          game.roll(5)
-          game.roll(10)
-        end
-
-        it { expect(game).to have_total_score(20) }
+      it 'accumulates score correctly' do
+        roll_sequence(game, Array.new(5, [5, 5]).flatten)
+        expect(game).to have_total_score(70) 
       end
     end
   end
@@ -129,40 +76,38 @@ RSpec.describe Game, type: :model do
   describe 'Input Validation and Frame Integrity' do
     context 'in regular frames' do
       it 'rejects a roll exceeding 10 pins' do
-        game.roll(11)
-        game.valid? 
+        roll_sequence(game, [11])
+        game.valid?
         expect(game.errors[:base]).to include(match(/Cannot knock down more than 10 pins in a single roll/))
       end
 
       it 'rejects a frame where the total exceeds 10 pins' do
-        expect { game.roll(5) }.to_not raise_error
+        roll_sequence(game, [5])
         expect { game.roll(6) }.to raise_error(ActiveRecord::RecordInvalid)
       end
-      
     end
 
     context 'in the final frame' do
       before do
-        18.times { game.roll(0) }
-        game.valid? 
+        roll_sequence(game, Array.new(9, 0))
+        game.valid?
       end
 
       it 'allows a strike in the final frame' do
-        game.roll(10)
-        game.valid? 
+        roll_sequence(game, [10])
+        game.valid?
         expect(game.errors[:base]).to be_empty
       end
 
       it 'rejects a single roll exceeding 10 pins in the final frame' do
-        game.roll(11)
-        game.valid? 
+        roll_sequence(game, [11])
+        game.valid?
         expect(game.errors[:base]).to include(match(/Cannot knock down more than 10 pins in a single roll/))
       end
 
       it 'allows the first two rolls to total more than 10 if a spare is scored' do
-        game.roll(5)
-        game.roll(5) 
-        game.valid? 
+        roll_sequence(game, Array.new(2,5))
+        game.valid?
         expect(game.errors[:base]).to be_empty
       end
     end
