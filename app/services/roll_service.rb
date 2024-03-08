@@ -7,6 +7,9 @@ class RollService
     end
 
     def add_roll(pins)
+        if pins < 0 || pins > 10
+            raise StandardError, "Invalid number of pins: #{pins}"
+        end
         begin
             update_roll_data(pins)
         rescue StandardError => exception
