@@ -15,3 +15,9 @@ RSpec.shared_context 'with tied games setup' do
       create(:game_session, :with_tied_games)
     end
 end
+
+RSpec.shared_context "game setup for API" do
+  let!(:game_session) { create(:game_session, :with_players) }
+  let!(:player) { game_session.players.first }
+  let!(:game) { create(:game, player: player) }
+end

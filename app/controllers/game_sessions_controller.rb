@@ -22,7 +22,7 @@ class GameSessionsController < ApplicationController
             render json: { message: 'No players in this game session.' }, status: :ok
         elsif @game_session.games.empty?
             render json: { message: 'No games in this session' }, status: :ok
-        elsif !@game_session.games.where("total_score > 0").exists?  # Updated condition
+        elsif !@game_session.games.where("total_score > 0").exists? 
             render json: { message: 'No games have been played in this session.' }, status: :ok
         else
           winners = @game_session.winners
