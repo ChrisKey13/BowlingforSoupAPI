@@ -1,6 +1,8 @@
 class GameSession < ApplicationRecord
     has_many :players, dependent: :destroy
     has_many :games, through: :players
+    has_many :participations
+    has_many :teams, through: :participations
 
     accepts_nested_attributes_for :players
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_06_174747) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_09_140120) do
   create_table "game_sessions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -27,6 +27,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_06_174747) do
     t.index ["player_id"], name: "index_games_on_player_id"
   end
 
+  create_table "participations", force: :cascade do |t|
+    t.integer "team_id", null: false
+    t.integer "game_session_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["game_session_id"], name: "index_participations_on_game_session_id"
+    t.index ["team_id", "game_session_id"], name: "index_participations_on_team_id_and_game_session_id", unique: true
+    t.index ["team_id"], name: "index_participations_on_team_id"
+  end
+
   create_table "players", force: :cascade do |t|
     t.string "name"
     t.integer "game_session_id", null: false
@@ -35,7 +45,27 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_06_174747) do
     t.index ["game_session_id"], name: "index_players_on_game_session_id"
   end
 
+  create_table "team_players", force: :cascade do |t|
+    t.integer "team_id", null: false
+    t.integer "player_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["player_id"], name: "index_team_players_on_player_id"
+    t.index ["team_id", "player_id"], name: "index_team_players_on_team_id_and_player_id", unique: true
+    t.index ["team_id"], name: "index_team_players_on_team_id"
+  end
+
+  create_table "teams", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_foreign_key "games", "game_sessions"
   add_foreign_key "games", "players"
+  add_foreign_key "participations", "game_sessions"
+  add_foreign_key "participations", "teams"
   add_foreign_key "players", "game_sessions"
+  add_foreign_key "team_players", "players"
+  add_foreign_key "team_players", "teams"
 end
