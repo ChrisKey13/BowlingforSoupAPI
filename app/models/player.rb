@@ -1,6 +1,8 @@
 class Player < ApplicationRecord
     belongs_to :game_session
     has_many :games, dependent: :destroy
+    has_many :team_players
+    has_many :teams, through: :team_players
   
     validates :name, presence: true
 

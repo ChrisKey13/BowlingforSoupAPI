@@ -21,3 +21,11 @@ RSpec.shared_context "game setup for API" do
   let!(:player) { game_session.players.first }
   let!(:game) { create(:game, player: player) }
 end
+
+RSpec.shared_context "game with teams setup" do
+  let!(:game_session) { create(:game_session) }
+  let!(:team) { create(:team) }
+  let!(:player) { create(:player, game_session: game_session) }
+  let!(:team_player) { create(:team_player, team: team, player: player) }
+  let!(:participation) { create(:participation, team: team, game_session: game_session) }
+end
