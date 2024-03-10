@@ -36,4 +36,12 @@ RSpec.describe GameSession, type: :model do
       end
     end
   end
+
+  describe 'Unique Team Participation' do
+    include_context 'game with teams setup' 
+
+    it "allows unique team participation only" do
+      expect(game_session).to ensure_unique_participation.for_team(team)
+    end
+  end
 end

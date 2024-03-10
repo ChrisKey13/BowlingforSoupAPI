@@ -14,5 +14,7 @@ Rails.application.routes.draw do
 
   resources :teams, only: [:create, :show]
 
+  resources :participations, only: [:create]
+
   get "up" => "rails/health#show", as: :rails_health_check
 end
