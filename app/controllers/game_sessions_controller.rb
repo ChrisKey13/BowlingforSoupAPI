@@ -2,7 +2,7 @@ class GameSessionsController < ApplicationController
     before_action :set_game_session, only: [:show, :winner]
 
     def show
-        render json: @game_session
+        render json: @game_session, include: [:players, teams:{include: :players}]
     end
 
     def create
