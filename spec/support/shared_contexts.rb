@@ -29,3 +29,25 @@ RSpec.shared_context "game with teams setup" do
   let!(:team_player) { create(:team_player, team: team, player: player) }
   let!(:participation) { create(:participation, team: team, game_session: game_session) }
 end
+
+RSpec.shared_context "team and game setup" do
+  before do
+    @game_session = create(:game_session)
+    @team = create(:team)
+    @player1 = create(:player)
+    @player2 = create(:player)
+    @team_player1 = create(:team_player, team: @team, player: @player1)
+    @team_player2 = create(:team_player, team: @team, player: @player2)
+    @participation = create(:participation, team: @team, game_session: @game_session)
+  end
+end
+
+RSpec.shared_context "team and player setup" do
+  before do
+    @game_session = create(:game_session)
+    @team = create(:team)
+    @player = create(:player)
+    create(:team_player, team: @team, player: @player)
+    @new_player = create(:player) 
+  end
+end
