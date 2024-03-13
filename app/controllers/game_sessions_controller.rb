@@ -2,8 +2,13 @@ class GameSessionsController < ApplicationController
     before_action :set_game_session, only: [:show, :winner]
 
     def show
-        render json: @game_session, include: [:players, teams:{include: :players}]
-    end
+        if @game_session.teams.any?
+          team_scores = TeamScorer.new(@game_session).call
+          render json: { game_session: @game_session, teams: team_scores }, include: [:players]
+        else
+          render json: @game_session, include: [:players, :games]
+        end
+      end
 
     def create
         game_session = GameSession.new(game_sessions_params)
@@ -45,5 +50,9 @@ class GameSessionsController < ApplicationController
 
     def set_game_session
         @game_session = GameSession.find(params[:id])
+    end
+
+    def calculate_team_score(team)
+        team.players.joins(:game).sum(:total_score)
     end
 end

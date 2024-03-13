@@ -3,6 +3,12 @@ require 'rails_helper'
 RSpec.describe GameSession, type: :model do
   include_context 'game setup'
 
+  before(:each) do
+    Participation.delete_all
+    puts "Cleaned up Participation records"
+  end
+
+
   describe 'Associations' do
     it { is_expected.to have_many(:players).dependent(:destroy) }
     it { is_expected.to have_many(:games).through(:players) }
@@ -39,9 +45,22 @@ RSpec.describe GameSession, type: :model do
 
   describe 'Unique Team Participation' do
     include_context 'game with teams setup' 
-
-    it "allows unique team participation only" do
-      expect(game_session).to ensure_unique_participation.for_team(team)
+  
+    context 'with no initial participation' do
+      before do
+        Participation.delete_all
+      end
+  
+      it "allows creating a new participation" do
+        expect(game_session).to only_allow_unique_participation_for_team.for_team(team)
+      end
+    end
+  
+    context 'when participation already exists' do
+      it "prevents duplicate team participation in the same game session" do
+        expect(game_session).to only_allow_unique_participation_for_team.for_team(team)
+      end
     end
   end
+  
 end
