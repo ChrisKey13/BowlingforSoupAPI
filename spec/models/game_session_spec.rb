@@ -5,7 +5,6 @@ RSpec.describe GameSession, type: :model do
 
   before(:each) do
     Participation.delete_all
-    puts "Cleaned up Participation records"
   end
 
 
