@@ -20,25 +20,22 @@ class GameSessionsController < ApplicationController
     end
 
     def winner
-        @game_session.reload        
-        games = @game_session.games
-
-        if @game_session.players.empty?
-            render json: { message: 'No players in this game session.' }, status: :ok
-        elsif @game_session.games.empty?
-            render json: { message: 'No games in this session' }, status: :ok
-        elsif !@game_session.games.where("total_score > 0").exists? 
-            render json: { message: 'No games have been played in this session.' }, status: :ok
-        else
-          winners = @game_session.winners
-          if winners.length > 1
-            render json: { winners: winners.map { |w| { id: w.id, name: w.name } } }, status: :ok
-          elsif winners.length == 1
-            render json: { winner: winners.first.name }, status: :ok
-          else
-            render json: { message: 'Unexpected scenario.' }, status: :internal_server_error
-          end
-        end
+      puts "Debug: @game_session before reload - #{@game_session&.inspect}"
+      @game_session.reload  
+    
+      if @game_session.players.empty?
+        render json: { message: 'No players in this game session.' }, status: :ok
+      elsif @game_session.games.empty?
+        render json: { message: 'No games have been played in this session.' }, status: :ok
+      else
+        calculator = GameSessions::WinnerCalculator.for(@game_session)
+        result = calculator.calculate
+        puts "Debug: Serialized JSON - #{result}"
+        render json: result, status: :ok
+      end
+    rescue => e
+      puts "Error calculating winner: #{e.message}\n#{e.backtrace.join("\n")}"
+      render json: { message: e.message }, status: :internal_server_error
     end
     
 
@@ -50,6 +47,9 @@ class GameSessionsController < ApplicationController
 
     def set_game_session
         @game_session = GameSession.find(params[:id])
+        puts "Debug: @game_session after find - #{@game_session&.inspect}"
+      rescue ActiveRecord::RecordNotFound => e
+        puts "GameSession with id #{params[:id]} not found: #{e.message}"
     end
 
     def calculate_team_score(team)
