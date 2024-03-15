@@ -42,6 +42,23 @@ RSpec.describe GameSession, type: :model do
     end
   end
 
+  describe '#team_winner' do
+    include_context 'game session with team scores'
+    it 'returns the team with the highest total score' do
+      expect(game_session.winning_teams).to contain_exactly(teams.last)
+    end
+  end
+  
+
+  describe '#team_winners' do
+    context 'when there is a tie' do
+      include_context 'game session with tied team scores'
+      it 'returns all teams with the highest score' do
+        expect(game_session.winning_teams).to contain_exactly(team1, team2)
+      end
+    end
+  end
+
   describe 'Unique Team Participation' do
     include_context 'game with teams setup' 
   

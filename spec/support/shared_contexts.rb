@@ -88,5 +88,71 @@ RSpec.shared_context 'TeamScorer Setup' do
   end
 end
 
+RSpec.shared_context 'game session with team scores' do
+  let!(:game_session) { create(:game_session) }
+  let!(:teams) { create_list(:team, 2) }
+
+  before do
+    teams.each_with_index do |team, index|
+      player = create(:player, game_session: game_session)
+      create(:team_player, team: team, player: player)
+      create(:game, player: player, total_score: 100 * (index + 1), game_session: game_session)
+      create(:participation, team: team, game_session: game_session)
+    end
+  end
+end 
+
+
+RSpec.shared_context 'game session with scores' do
+  let!(:game_session) { create(:game_session) }
+  let!(:players) { create_list(:player, 2, game_session: game_session) }
+
+  before do
+    players.each_with_index do |player, index|
+      create(:game, player: player, total_score: 50 * (index + 1), game_session: game_session)
+    end
+  end
+end  
+
+RSpec.shared_context 'game session with tied team scores' do
+  let!(:game_session) { create(:game_session) }
+  let!(:team1) { create(:team) }
+  let!(:team2) { create(:team) }
+
+  before do
+    tied_score = 150
+
+    player1_team1 = create(:player, game_session: game_session)
+    create(:game, player: player1_team1, total_score: tied_score, game_session: game_session)
+    create(:team_player, team: team1, player: player1_team1)
+    create(:participation, team: team1, game_session: game_session)
+
+    player1_team2 = create(:player, game_session: game_session)
+    create(:game, player: player1_team2, total_score: tied_score, game_session: game_session)
+    create(:team_player, team: team2, player: player1_team2)
+    create(:participation, team: team2, game_session: game_session)
+  end
+  let(:expected_team_one) { team1 }
+  let(:expected_team_two) { team2 }
+end
+
+RSpec.shared_context 'game session with team winner setup' do
+  let!(:game_session) { create(:game_session) }
+  let!(:team1) { create(:team, name: 'Team A') }
+  let!(:team2) { create(:team, name: 'Team B') }
+  let!(:player1_team1) { create(:player, game_session: game_session) }
+  let!(:player2_team2) { create(:player, game_session: game_session) }
+
+  before do
+    create(:game, player: player1_team1, total_score: 100, game_session: game_session)
+    create(:game, player: player2_team2, total_score: 50, game_session: game_session)
+    create(:team_player, team: team1, player: player1_team1)
+    create(:team_player, team: team2, player: player2_team2)
+    create(:participation, team: team1, game_session: game_session)
+    create(:participation, team: team2, game_session: game_session)
+  end
+
+  let(:expected_winning_team) { team1 }
+end
 
 

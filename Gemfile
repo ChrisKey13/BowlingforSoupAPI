@@ -53,4 +53,4 @@ group :test do
   gem 'database_cleaner-active_record'
 end
 
-
+gem 'active_model_serializers', '~> 0.10.0'

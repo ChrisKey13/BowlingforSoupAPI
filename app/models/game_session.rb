@@ -17,4 +17,22 @@ class GameSession < ApplicationRecord
         tied_winners = games.where(total_score: winning_score).map(&:player)
     end
 
+    def winning_teams
+        highest_total_score = teams.joins(players: :games)
+                                    .group('teams.id')
+                                    .having('SUM(games.total_score) > 0')
+                                    .sum('games.total_score')
+                                    .values
+                                    .max
+        
+        puts "Highest total score: #{highest_total_score}"
+
+        return Team.none unless highest_total_score
+      
+        teams.joins(players: :games)
+            .select('teams.*, SUM(games.total_score) AS total_team_score')
+            .group('teams.id')
+            .having('SUM(games.total_score) = ?', highest_total_score)
+    end
+      
 end
