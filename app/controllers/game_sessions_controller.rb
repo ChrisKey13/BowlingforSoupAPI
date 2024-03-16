@@ -20,7 +20,6 @@ class GameSessionsController < ApplicationController
     end
 
     def winner
-      puts "Debug: @game_session before reload - #{@game_session&.inspect}"
       @game_session.reload  
     
       if @game_session.players.empty?
@@ -30,11 +29,9 @@ class GameSessionsController < ApplicationController
       else
         calculator = GameSessions::WinnerCalculator.for(@game_session)
         result = calculator.calculate
-        puts "Debug: Serialized JSON - #{result}"
         render json: result, status: :ok
       end
     rescue => e
-      puts "Error calculating winner: #{e.message}\n#{e.backtrace.join("\n")}"
       render json: { message: e.message }, status: :internal_server_error
     end
     
@@ -47,9 +44,7 @@ class GameSessionsController < ApplicationController
 
     def set_game_session
         @game_session = GameSession.find(params[:id])
-        puts "Debug: @game_session after find - #{@game_session&.inspect}"
       rescue ActiveRecord::RecordNotFound => e
-        puts "GameSession with id #{params[:id]} not found: #{e.message}"
     end
 
     def calculate_team_score(team)

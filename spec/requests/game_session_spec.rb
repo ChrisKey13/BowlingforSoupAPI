@@ -99,7 +99,6 @@ RSpec.describe 'GameSessions API', type: :request do
       end
     
       it 'returns the winning team for the game session' do
-        puts "game sessoin id #{game_session.id}"
         get winner_game_session_path(game_session)
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body)

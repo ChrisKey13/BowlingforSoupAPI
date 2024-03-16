@@ -9,7 +9,6 @@ module GameSessions
               { error: "No winning team found" }
             end
           rescue => e
-            puts "Error calculating winner: #{e.message}\n#{e.backtrace.join("\n")}"
             { error: "Failed to calculate winner" }
           end
     end
