@@ -25,8 +25,6 @@ class GameSession < ApplicationRecord
                                     .values
                                     .max
         
-        puts "Highest total score: #{highest_total_score}"
-
         return Team.none unless highest_total_score
       
         teams.joins(players: :games)
