@@ -22,6 +22,8 @@ Rails.application.routes.draw do
   resources :participations, only: [:create]
 
   get 'search', to: 'search#index'
+  get 'search/autocomplete', to: 'search#autocomplete', as: 'autocomplete_search'
+
 
   get "up" => "rails/health#show", as: :rails_health_check
 end
