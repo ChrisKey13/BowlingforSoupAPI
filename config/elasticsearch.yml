@@ -1,0 +1,4 @@
+development:
+  log: true
+  trace: true
+  logger: Rails.logger

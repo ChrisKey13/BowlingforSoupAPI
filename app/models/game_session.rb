@@ -1,10 +1,21 @@
 class GameSession < ApplicationRecord
+    include Searchable
+
     has_many :players, dependent: :destroy
     has_many :games, through: :players
     has_many :participations
     has_many :teams, through: :participations
 
     accepts_nested_attributes_for :players
+
+    def as_indexed_json(options={})
+        super.merge({
+            model_type: self.class.name.downcase,
+            participations_count: participations.count,
+            teams_count: teams.count,
+            players_count: players.count
+        })
+    end
 
     def winner
         scored_games = games.where.not(total_score: nil)

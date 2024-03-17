@@ -1,4 +1,6 @@
 class Player < ApplicationRecord
+  include Searchable
+
     belongs_to :game_session
     has_many :games, dependent: :destroy
     has_many :team_players
@@ -7,6 +9,16 @@ class Player < ApplicationRecord
     validates :name, presence: true
 
     after_create :create_initial_game
+
+    def as_indexed_json(options={})
+      super.merge({
+        model_type: self.class.name.downcase,
+        game_session_id: game_session_id,
+        games_count: games.count,
+        teams_count: teams.count
+      })
+    end
+  
 
     private
 

@@ -1,5 +1,7 @@
 class Game < ApplicationRecord
   include BowlingValidation
+  include Searchable
+
   belongs_to :player, optional: true
   belongs_to :game_session, optional: true
 
@@ -9,7 +11,16 @@ class Game < ApplicationRecord
   
   after_initialize :initialize_state
 
-  
+  def as_indexed_json(options={})
+    super.merge({
+      model_type: self.class.name.downcase,
+      frames: frames,
+      total_score: total_score,
+      player_id: player_id,
+      game_session_id: game_session_id
+    })
+  end
+
   def roll(pins)
     return false unless update_roll_attempt(pins) && valid?
 
