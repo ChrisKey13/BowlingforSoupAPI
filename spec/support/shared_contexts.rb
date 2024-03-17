@@ -158,17 +158,27 @@ end
 
 RSpec.shared_context 'with indexed models', shared_context: :metadata do
   before do
-    game_session = GameSession.create!
-    team = Team.create!(name: "Alpha Team")
-    player = Player.create!(name: "John Doe", game_session: game_session)
-    game = Game.create!(total_score: 100, player: player, game_session: game_session)
-    participation = Participation.create!(team: team, game_session: game_session)
-    team_player = TeamPlayer.create!(team: team, player: player)
-
     [GameSession, Game, Participation, Player, TeamPlayer, Team].each do |model|
-      model.__elasticsearch__.import(force: true)
+      model.__elasticsearch__.client.indices.delete(index: model.__elasticsearch__.index_name, ignore_unavailable: true)
+      model.__elasticsearch__.create_index!(force: true)
+      model.__elasticsearch__.import
       model.__elasticsearch__.refresh_index!
     end
-    sleep 1 
+
+    game_session = GameSession.create!
+    unique_team_name = "Alpha Team #{Time.now.to_i}"
+    team = Team.create!(name: unique_team_name)
+    puts "Created team: #{Team.last.name}"
+    player = Player.create!(name: "John Doe", game_session: game_session)
+    Game.create!(total_score: 100, player: player, game_session: game_session)
+    Participation.create!(team: team, game_session: game_session)
+    TeamPlayer.create!(team: team, player: player)
+
+    [GameSession, Game, Participation, Player, TeamPlayer, Team].each do |model|
+      model.__elasticsearch__.import
+      model.__elasticsearch__.refresh_index!
+    end
+
+    sleep 2
   end
 end

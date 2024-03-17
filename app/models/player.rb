@@ -13,15 +13,20 @@ class Player < ApplicationRecord
     settings index: { number_of_shards: 1 } do
       mappings dynamic: 'false' do
         indexes :name, type: 'text', analyzer: 'standard'
+        indexes :name_suggest, type: 'completion', analyzer: 'simple', search_analyzer: 'simple'
       end
     end
-
+  
     def as_indexed_json(options={})
       super.merge({
         model_type: self.class.name.downcase,
         game_session_id: game_session_id,
         games_count: games.count,
-        teams_count: teams.count
+        teams_count: teams.count,
+        name_suggest: {
+          input: [name],
+          weight: 5
+        }
       })
     end
   
