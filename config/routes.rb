@@ -20,5 +20,8 @@ Rails.application.routes.draw do
   end
 
   resources :participations, only: [:create]
+
+  get 'search', to: 'search#index'
+
   get "up" => "rails/health#show", as: :rails_health_check
 end
