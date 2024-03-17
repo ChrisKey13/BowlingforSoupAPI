@@ -100,4 +100,36 @@ RSpec.describe "Searches", type: :request do
       expect(suggestions.any? { |s| s["text"].include?("Alpha Team") }).to be true
     end
   end
+
+  describe "GET /index with faceted search/filtering" do
+    context "when filtering by team name" do
+      it "returns results filtered by the specified team name" do
+        get search_path, params: { query: "Alpha", team_name_filter: "Alpha Team" }
+
+        expect(response).to have_http_status(:ok)
+        results = JSON.parse(response.body)["results"]
+        expect(results.all? { |result| result["attributes"]["name"].include?("Alpha Team") }).to be true
+      end
+    end
+
+    context "when filtering games by score range" do
+      it "returns games with scores within the specified range" do
+        get search_path, params: { query: "", score_from: 50, score_to: 150 }
+
+        expect(response).to have_http_status(:ok)
+        results = JSON.parse(response.body)["results"]
+        expect(results.all? { |result| result["type"] == "game" && result["attributes"]["score"].between?(50, 150) }).to be true
+      end
+    end
+
+    context "when combining filters" do
+      it "returns results that match all filters" do
+        get search_path, params: { query: "Alpha", team_name_filter: "Alpha Team", score_from: 50, score_to: 150 }
+
+        expect(response).to have_http_status(:ok)
+        results = JSON.parse(response.body)["results"]
+        expect(results.all? { |result| result["attributes"]["name"].include?("Alpha Team") && result["attributes"]["score"].between?(50, 150) }).to be true
+      end
+    end
+  end
 end

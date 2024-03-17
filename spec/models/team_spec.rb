@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Team, type: :model do
+  subject { described_class.new(name: "Unique Team Name #{SecureRandom.hex}") }
+
   describe 'associations' do
     it { is_expected.to have_many(:team_players).dependent(:destroy) }
     it { is_expected.to have_many(:players).through(:team_players) }
