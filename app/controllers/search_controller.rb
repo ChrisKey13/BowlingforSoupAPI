@@ -9,9 +9,15 @@ class SearchController < ApplicationController
           query: {
             multi_match: {
               query: query,
-              fields: ['name^2', 'description', 'model_type']
+              fields: ['name^2', 'description', 'model_type'],
+              fuzziness: "AUTO"
             }
-          }
+          },
+            highlight: { 
+                fields: {
+                    name: {}
+                }
+            }
         }
   
         results = Elasticsearch::Model.search(search_definition, [GameSession, Game, Participation, Player, TeamPlayer, Team]).results
