@@ -36,7 +36,6 @@ class SearchController < ApplicationController
     end
 
     def autocomplete
-      puts "In SearchController#autocomplete with params: #{params.inspect}"
         query = params[:query].strip
         suggestions = []
     
@@ -58,14 +57,10 @@ class SearchController < ApplicationController
           }
     
           results = Elasticsearch::Model.search(search_definition, [Player, Team]).response
-          puts 'Fetching autocomplete suggestions'
-          puts "Elasticsearch query: #{search_definition.inspect}"
-          puts "Elasticsearch response: #{results.inspect}"
 
           suggestions = results.suggest['name_suggestion'][0]['options'].map do |option|
             { text: option['text'], score: option['_score'] }
           end
-          puts "Autocomplete suggestions: #{suggestions.inspect}"
         end
     
         render json: { suggestions: suggestions }, status: :ok
