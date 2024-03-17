@@ -10,6 +10,12 @@ class Player < ApplicationRecord
 
     after_create :create_initial_game
 
+    settings index: { number_of_shards: 1 } do
+      mappings dynamic: 'false' do
+        indexes :name, type: 'text', analyzer: 'standard'
+      end
+    end
+
     def as_indexed_json(options={})
       super.merge({
         model_type: self.class.name.downcase,
