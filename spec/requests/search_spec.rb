@@ -53,8 +53,6 @@ RSpec.describe "Searches", type: :request do
   describe "GET /autocomplete" do
     include_context "with indexed models"
 
-    puts "Starting test setup"
-
     before do
       Player.__elasticsearch__.create_index!(force: true)
       Team.__elasticsearch__.create_index!(force: true)
@@ -66,14 +64,11 @@ RSpec.describe "Searches", type: :request do
     end
 
     it "returns suggestions for 'Alph'" do
-      puts 'Making autocomplete request'
       get autocomplete_search_path, params: { query: "Alph" }
-      puts "Response body: #{response.body}"
 
       expect(response).to have_http_status(:ok)
       suggestions = JSON.parse(response.body)["suggestions"]
       expect(suggestions.any? { |s| s["text"].start_with?("Alpha Team") }).to be true
-      puts 'Test teardown'
     end
 
     it "returns suggestions for 'Joh'" do
@@ -97,7 +92,7 @@ RSpec.describe "Searches", type: :request do
       suggestions = JSON.parse(response.body)["suggestions"]
       expect(suggestions).to be_empty
     end 
-    
+
     it "handles queries with special characters correctly" do
       get autocomplete_search_path, params: { query: "Alpha Team@" }
       expect(response).to have_http_status(:ok)
