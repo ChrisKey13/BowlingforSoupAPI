@@ -58,3 +58,5 @@ gem 'active_model_serializers', '~> 0.10.0'
 gem 'elasticsearch-model'
 gem 'elasticsearch-rails'
 gem 'elasticsearch-persistence'
+
+gem 'redis-rails'
