@@ -31,6 +31,9 @@ rescue ActiveRecord::PendingMigrationError => e
   exit 1
 end
 RSpec.configure do |config|
+  config.before(:each, elasticsearch: true) do
+    Team.__elasticsearch__.create_index!(force: true)
+  end
   config.include RequestSpecHelper, type: :request
   config.include FactoryBot::Syntax::Methods
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

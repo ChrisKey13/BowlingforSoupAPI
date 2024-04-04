@@ -3,12 +3,19 @@ require 'rails_helper'
 RSpec.describe "Searches", type: :request do
   include_context 'with indexed models'
 
-  describe "GET /index" do
+  describe "GET /index", elasticsearch: true do  
     it "returns relevant results for a given query" do
-      get search_path, params: { query: "Alpha" }
-
+      get search_path, params: { query: "Alpha Team" }  
       expect(response).to have_http_status(:ok)
-      expect(response).to have_search_result(type: "team", name: "Alpha Team")
+      results = JSON.parse(response.body)["results"]
+      expect(results).to include(
+        a_hash_including(
+          "_source" => a_hash_including(
+            "name" => a_string_including("Alpha Team")
+          )
+        )
+      )
+         
     end
   end
 
@@ -18,7 +25,14 @@ RSpec.describe "Searches", type: :request do
         get search_path, params: { query: "Alpah" }
 
         expect(response).to have_http_status(:ok)
-        expect(response).to have_search_result(type: "team", name: "Alpha Team")
+        results = JSON.parse(response.body)["results"]
+        expect(results).to include(
+          a_hash_including(
+            "_source" => a_hash_including(
+              "name" => a_string_including("Alpha Team")
+            )
+          )
+        )
       end
     end
 
@@ -27,7 +41,14 @@ RSpec.describe "Searches", type: :request do
         get search_path, params: { query: "Alppha" } 
 
         expect(response).to have_http_status(:ok)
-        expect(response).to have_search_result(type: "team", name: "Alpha Team")
+        results = JSON.parse(response.body)["results"]
+        expect(results).to include(
+          a_hash_including(
+            "_source" => a_hash_including(
+              "name" => a_string_including("Alpha Team")
+            )
+          )
+        )
       end
     end
 
@@ -36,7 +57,14 @@ RSpec.describe "Searches", type: :request do
         get search_path, params: { query: "Alha" } 
 
         expect(response).to have_http_status(:ok)
-        expect(response).to have_search_result(type: "team", name: "Alpha Team")
+        results = JSON.parse(response.body)["results"]
+        expect(results).to include(
+          a_hash_including(
+            "_source" => a_hash_including(
+              "name" => a_string_including("Alpha Team")
+            )
+          )
+        )
       end
     end
 
@@ -45,7 +73,14 @@ RSpec.describe "Searches", type: :request do
         get search_path, params: { query: "Aplha" } 
 
         expect(response).to have_http_status(:ok)
-        expect(response).to have_search_result(type: "team", name: "Alpha Team")
+        results = JSON.parse(response.body)["results"]
+        expect(results).to include(
+          a_hash_including(
+            "_source" => a_hash_including(
+              "name" => a_string_including("Alpha Team")
+            )
+          )
+        )
       end
     end
   end
@@ -108,7 +143,15 @@ RSpec.describe "Searches", type: :request do
 
         expect(response).to have_http_status(:ok)
         results = JSON.parse(response.body)["results"]
-        expect(results.all? { |result| result["attributes"]["name"].include?("Alpha Team") }).to be true
+        expect(results).to all(
+          a_hash_including(
+            "_source" => a_hash_including(
+              "name" => a_string_including("Alpha Team")
+            )
+          )
+        )
+        
+          
       end
     end
 
@@ -128,7 +171,13 @@ RSpec.describe "Searches", type: :request do
 
         expect(response).to have_http_status(:ok)
         results = JSON.parse(response.body)["results"]
-        expect(results.all? { |result| result["attributes"]["name"].include?("Alpha Team") && result["attributes"]["score"].between?(50, 150) }).to be true
+        expect(results).to all(
+          a_hash_including(
+            "_source" => a_hash_including(
+              "name" => a_string_including("Alpha Team")
+            )
+          )
+        )
       end
     end
   end

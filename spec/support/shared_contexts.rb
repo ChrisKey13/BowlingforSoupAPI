@@ -163,6 +163,8 @@ RSpec.shared_context 'with indexed models', shared_context: :metadata do
       model.__elasticsearch__.create_index!(force: true)
       model.__elasticsearch__.import
       model.__elasticsearch__.refresh_index!
+      model.__elasticsearch__.client.indices.refresh(index: model.__elasticsearch__.index_name)
+
     end
 
     game_session = GameSession.create!
@@ -179,5 +181,6 @@ RSpec.shared_context 'with indexed models', shared_context: :metadata do
     end
 
     sleep 2
+    puts "[Debug] Indexed models setup complete. Indexed Team name: #{Team.last.name}"
   end
 end
